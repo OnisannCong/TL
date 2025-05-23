@@ -31,6 +31,30 @@ function deleteNote(id) {
   }
 }
 
+function renderNotes() {
+  const container = document.getElementById("notesContainer");
+  container.innerHTML = "";
+  notes.filter(n => n.dateDeleted === null).forEach(note => {
+    const div = document.createElement("div");
+    div.className = "note";
+    div.innerHTML = `
+      <div class="note-header">
+        <span class="note-title">${note.title}</span>
+        <div>
+          <button onclick="editNote(${note.noteId})">✏️</button>
+          <button onclick="deleteNote(${note.noteId})">🗑️</button>
+          <button onclick="exportNote(${note.noteId}, 'txt')">📤 TXT</button>
+          <button onclick="exportNote(${note.noteId}, 'pdf')">📄 PDF</button>
+          <button onclick="exportNote(${note.noteId}, 'doc')">📃 DOC</button>
+        </div>
+      </div>
+      <div>${note.content}</div>
+      <div class="note-meta">Δημιουργήθηκε: ${new Date(note.dateCreated).toLocaleString()}</div>
+    `;
+    container.appendChild(div);
+  });
+}
+
 function editNote(id) {
   const note = notes.find(n => n.noteId === id);
   if (!note) return;
