@@ -76,17 +76,21 @@
       margin-top: 0.5rem;
     }
     .toast {
-      position: fixed;
-      bottom: 1rem;
-      right: 1rem;
-      background: #323232;
-      color: var(--text-color);
-      opacity: 0.75;
-      padding: 1rem;
-      border-radius: 8px;
-      opacity: 0;
-      animation: fadeInOut 3s forwards;
-    }
+     position: fixed;
+     bottom: 1rem;
+     right: 1rem;
+     background: #323232;
+     color: white;
+     padding: 1rem;
+     border-radius: 8px;
+     opacity: 0;
+     animation: fadeInOut 3s forwards;
+     z-index: 2000;
+   }
+    body:not(.dark) .toast {
+     background: #2a2f45;
+     color: white;
+   }
     .modal {
      position: fixed;
      top: 0; left: 0; width: 100%; height: 100%;
