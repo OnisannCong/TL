@@ -190,14 +190,37 @@
    .note-button:hover {
      background: var(--button-hover);
    }
+   .action-grid {
+     display: flex;
+     justify-content: space-between;
+     gap: 1rem;
+     margin-top: 2rem;
+   }
+   .action-card {
+     flex: 1;
+     background: var(--note-bg);
+     color: var(--note-text);
+     padding: 1.2rem;
+     text-align: center;
+     border-radius: 12px;
+     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+     cursor: pointer;
+     font-size: 1.1rem;
+     transition: transform 0.2s, background 0.2s;
+   }
+   .action-card:hover {
+     background: var(--button-bg);
+     color: white;
+     transform: scale(1.03);
+   } 
   </style>
 </head>
 <body>
   <h1>StudentNote</h1>
-<div class="toolbar" style="margin-top: 2rem;">
-  <button onclick="uploadNoteFile()">📄 Ανέβασε Αρχείο (UC7)</button>
-  <button onclick="openChatMock()">💬 Chat με Φίλο (UC9)</button>
-  <button onclick="searchUserMock()">🔍 Αναζήτηση Χρήστη (UC11.1)</button>
+<div class="action-grid">
+  <div class="action-card" onclick="uploadNoteFile()">📄 Εισαγωγή Αρχείου</div>
+  <div class="action-card" onclick="openChatMock()">💬 Συνομιλία</div>
+  <div class="action-card" onclick="searchUserMock()">🔍 Αναζήτηση Χρήστη</div>
 </div>
 
   <div class="toolbar">
@@ -216,13 +239,7 @@
   <textarea id="noteContent" rows="4" placeholder="Περιεχόμενο..."></textarea>
   <button class="note-button" onclick="saveNote()">Αποθήκευση</button>
   <button id="darkModeToggle" onclick="toggleDarkMode()">🌙 Dark Mode</button>
-  <button onclick="editNote(${note.id})">✏️</button>
-  <button onclick="deleteNote(${note.id})">🗑️</button>
-  <button onclick="showVersions(${note.id})">📜</button>
-  <button onclick="exportMain(${note.id})">📤</button>
-  <button onclick="copyShareLink(${note.id})">🔗</button>
-  <button onclick="shareNoteToFriend(${note.id})">👥</button>
-
+  
   <h2>Οι Σημειώσεις μου</h2>
   <div id="notesContainer"></div>
 
