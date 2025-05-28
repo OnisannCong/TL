@@ -213,6 +213,23 @@
      color: white;
      transform: scale(1.03);
    } 
+   .note-header button {
+     background-color: transparent;
+     border: none;
+     font-size: 1.2rem;
+     cursor: pointer;
+     padding: 0.3rem 0.5rem;
+     border-radius: 8px;
+     transition: background-color 0.2s ease;
+   }
+
+   .note-header button:hover {
+     background-color: rgba(0, 0, 0, 0.1);
+   }
+    body.dark .note-header button:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+   }
+
   </style>
 </head>
 <body>
@@ -293,106 +310,6 @@
       document.getElementById("noteContent").value = note.content;
     }
 
-    function showVersions(id) {
-      const note = notes.find(n => n.id === id);
-      if (!note || !note.versions.length) return showToast("Δεν υπάρχουν εκδόσεις.");
-      const modal = document.createElement("div");
-      modal.className = "modal";
-      const box = document.createElement("div");
-      box.className = "modal-box";
-      const title = document.createElement("h3");
-      title.innerText = "Ιστορικό Εκδόσεων";
-      box.appendChild(title);
-      note.versions.forEach((v, i) => {
-        const btn = document.createElement("button");
-        btn.innerText = `${i + 1}) ${new Date(v.date).toLocaleString()}`;
-        btn.onclick = () => {
-          note.title = v.title;
-          note.content = v.content;
-          note.dateEdited = new Date().toISOString();
-          updateStorage();
-          modal.remove();
-          renderNotes();
-        };
-        box.appendChild(btn);
-      });
-      const cancel = document.createElement("button");
-      cancel.innerText = "Κλείσιμο";
-      cancel.onclick = () => modal.remove();
-      box.appendChild(cancel);
-      modal.appendChild(box);
-      document.body.appendChild(modal);
-    }
-
-    function undoDelete() {
-      if (deletedNote) {
-        notes.push(deletedNote);
-        deletedNote = null;
-        updateStorage();
-        renderNotes();
-        showToast("Ανακτήθηκε η σημείωση.");
-      }
-    }
-
-   function showVersions(id) {
-     const note = notes.find(n => n.id === id);
-     if (!note || !note.versions.length) return showToast("Δεν υπάρχουν εκδόσεις.");
-
-     const modal = document.createElement("div");
-     modal.className = "modal";
-     const box = document.createElement("div");
-     box.className = "modal-box";
-     const title = document.createElement("h3");
-     title.innerText = "Ιστορικό Εκδόσεων";
-     box.appendChild(title);
-
-  note.versions.slice().reverse().forEach((v, i) => {
-     const preview = document.createElement("p");
-     preview.className = "note-meta";
-     preview.innerText = `Τίτλος: ${v.title}\nΠροεπισκόπηση: ${v.content.substring(0, 60)}...`;
-
-     const btns = document.createElement("div");
-     btns.style.marginBottom = "0.5rem";
-
-     const restoreBtn = document.createElement("button");
-     restoreBtn.innerText = `Επαναφορά (${new Date(v.date).toLocaleString()})`;
-     restoreBtn.onclick = () => {
-     note.title = v.title;
-     note.content = v.content;
-     note.dateEdited = new Date().toISOString();
-     updateStorage();
-     modal.remove();
-     renderNotes();
-    };
-
-     const exportTxt = document.createElement("button");
-     exportTxt.innerText = "TXT";
-     exportTxt.onclick = () => exportVersion(v, note.title, "txt");
-     const exportPdf = document.createElement("button");
-     exportPdf.innerText = "PDF";
-     exportPdf.onclick = () => exportVersion(v, note.title, "pdf");
-
-     const exportDoc = document.createElement("button");
-     exportDoc.innerText = "DOC";
-      exportDoc.onclick = () => exportVersion(v, note.title, "doc");
-
-     btns.appendChild(restoreBtn);
-     btns.appendChild(exportTxt);
-     btns.appendChild(exportPdf);
-     btns.appendChild(exportDoc);
-     box.appendChild(preview);
-     box.appendChild(btns);
-   });
-
-   const cancel = document.createElement("button");
-   cancel.innerText = "Κλείσιμο";
-   cancel.onclick = () => modal.remove();
-   box.appendChild(cancel);
-
-   modal.appendChild(box);
-   document.body.appendChild(modal);
-}
-
 function exportVersion(version, title, format) {
   const filename = `${title.replace(/\s+/g, '_')}_version.${format}`;
   if (format === "pdf") {
@@ -425,6 +342,9 @@ function exportVersion(version, title, format) {
   modal.className = "modal";
   const box = document.createElement("div");
   box.className = "modal-box";
+  box.className = "modal-box";
+  box.setAttribute("role", "dialog");
+  box.setAttribute("aria-label", "Ιστορικό Εκδόσεων");
   const title = document.createElement("h3");
   title.innerText = "Ιστορικό Εκδόσεων";
   box.appendChild(title);
@@ -585,22 +505,20 @@ function exportMain(id) {
         div.innerHTML = `
           <div class="note-header">
             <span class="note-title">${note.title}</span>
-            <div>
-              <button onclick="editNote(${note.id})">✏️</button>
-              <button onclick="deleteNote(${note.id})">🗑️</button>
-              <button onclick="showVersions(${note.id})">📜</button>
-              <button onclick="exportMain(${note.id})">📤</button>
-              <button onclick="copyShareLink(${note.id})">🔗 Κοινοποίηση</button>
-              <button onclick="shareNoteToFriend(${note.id})">👥</button>
-            </div>
-          </div>
-          <div>${note.content}</div>
-          <div class="note-meta">Τελευταία ενημέρωση: ${new Date(note.dateEdited).toLocaleString()}</div>
-        `;
+           <div>
+             <button onclick="editNote(${note.id})" title="Επεξεργασία">✏️</button>
+            <button onclick="deleteNote(${note.id})" title="Διαγραφή">🗑️</button>
+            <button onclick="showVersions(${note.id})" title="Ιστορικό Εκδόσεων">📜</button>
+            <button onclick="exportMain(${note.id})" title="Εξαγωγή">📤</button>
+            <button onclick="copyShareLink(${note.id})" title="Κοινοποίηση με Σύνδεσμο">🔗</button>
+            <button onclick="shareNoteToFriend(${note.id})" title="Κοινοποίηση σε Φίλο">👥</button>
+         </div>
+       </div>`
+
         container.appendChild(div);
       });
     }
-
+    
     function exportOne(id) {
       const note = notes.find(n => n.id === id);
       if (!note) return;
@@ -729,38 +647,7 @@ function exportMain(id) {
   modal.appendChild(box);
   document.body.appendChild(modal);
 }
-function renderNotes() {
-  const container = document.getElementById("notesContainer");
-  container.innerHTML = "";
-  const search = document.getElementById("searchBox").value.toLowerCase();
-  const sort = document.getElementById("sortOrder").value;
-  let displayNotes = [...notes].filter(n =>
-    n.title.toLowerCase().includes(search) || n.content.toLowerCase().includes(search)
-  );
-  if (sort === "title") displayNotes.sort((a, b) => a.title.localeCompare(b.title));
-  else displayNotes.sort((a, b) => new Date(b.dateEdited) - new Date(a.dateEdited));
 
-  displayNotes.forEach(note => {
-    const div = document.createElement("div");
-    div.className = "note";
-    div.innerHTML = `
-      <div class="note-header">
-        <span class="note-title">${note.title}</span>
-        <div>
-          <button onclick="editNote(${note.id})">✏️</button>
-          <button onclick="deleteNote(${note.id})">🗑️</button>
-          <button onclick="showVersions(${note.id})">📜</button>
-          <button onclick="exportMain(${note.id})">📤</button>
-          <button onclick="copyShareLink(${note.id})">🔗</button>
-          <button onclick="shareNoteToFriend(${note.id})">👥</button>
-        </div>
-      </div>
-      <div>${note.content}</div>
-      <div class="note-meta">Τελευταία ενημέρωση: ${new Date(note.dateEdited).toLocaleString()}</div>
-    `;
-    container.appendChild(div);
-  });
-}
 function uploadNoteFile() {
   const input = document.createElement("input");
   input.type = "file";
@@ -800,6 +687,52 @@ function uploadNoteFile() {
   };
   input.click();
 }
+function shareNoteToFriend(id) {
+  const note = notes.find(n => n.id === id);
+  if (!note) return;
+
+  const modal = document.createElement("div");
+  modal.className = "modal";
+
+  const box = document.createElement("div");
+  box.className = "modal-box";
+
+  const title = document.createElement("h3");
+  title.innerText = "👥 Κοινοποίηση Σημείωσης";
+  box.appendChild(title);
+
+  const select = document.createElement("select");
+  ["nikos@example.com", "kostas@example.com", "maria@example.com"].forEach(user => {
+    const option = document.createElement("option");
+    option.value = user;
+    option.innerText = user;
+    select.appendChild(option);
+  });
+  box.appendChild(select);
+
+  const shareBtn = document.createElement("button");
+  shareBtn.innerText = "📨 Αποστολή";
+  shareBtn.onclick = () => {
+    const historyKey = "chatHistory_" + select.value;
+    const history = JSON.parse(localStorage.getItem(historyKey)) || [];
+    history.push({
+      sender: "Εσύ",
+      message: `📎 Κοινοποίησες τη σημείωση: "${note.title}"`
+    });
+    localStorage.setItem(historyKey, JSON.stringify(history));
+    showToast(`Η σημείωση κοινοποιήθηκε στον ${select.value}!`);
+    modal.remove();
+  };
+  box.appendChild(shareBtn);
+
+  const cancelBtn = document.createElement("button");
+  cancelBtn.innerText = "Άκυρο";
+  cancelBtn.onclick = () => modal.remove();
+  box.appendChild(cancelBtn);
+
+  modal.appendChild(box);
+  document.body.appendChild(modal);
+}
 function openChatMock() {
   const modal = document.createElement("div");
   modal.className = "modal";
@@ -812,7 +745,7 @@ function openChatMock() {
   box.appendChild(title);
 
   const select = document.createElement("select");
-  ["Μαρία", "Γιώργος", "Άγγελος"].forEach(name => {
+  ["nikos@example.com", "kostas@example.com", "maria@example.com"].forEach(name => {
     const opt = document.createElement("option");
     opt.value = name;
     opt.textContent = name;
@@ -822,34 +755,51 @@ function openChatMock() {
 
   const chatBox = document.createElement("div");
   chatBox.style = "margin-top:1rem; height:150px; background:#f0f0f0; overflow-y:auto; padding:0.5rem; border-radius:8px; font-size:0.9rem";
+  box.appendChild(chatBox)
+
+function loadHistory(user) {
+  const history = JSON.parse(localStorage.getItem("chatHistory_" + user)) || [];
+  if (history.length === 0) {
   chatBox.innerHTML = "<i>Δεν υπάρχει ιστορικό συνομιλίας.</i>";
-  box.appendChild(chatBox);
-
-  const input = document.createElement("input");
-  input.type = "text";
-  input.placeholder = "Πληκτρολόγησε μήνυμα...";
-  input.style = "margin-top:1rem; width:100%; padding:0.5rem; border-radius:8px; border:1px solid #ccc";
-  box.appendChild(input);
-
-  const sendBtn = document.createElement("button");
-  sendBtn.innerText = "📨 Αποστολή";
-  sendBtn.onclick = () => {
-    if (input.value.trim()) {
-      chatBox.innerHTML += `<div><b>Εσύ:</b> ${input.value}</div>`;
-      input.value = "";
-      chatBox.scrollTop = chatBox.scrollHeight;
+  } else {
+    chatBox.innerHTML = history.map(m => `<div><b>${m.sender}:</b> ${m.message}</div>`).join("");
     }
+  }
+select.onchange = () => loadHistory(select.value);
+loadHistory(select.value);
+
+const input = document.createElement("input");
+input.type = "text";
+input.placeholder = "Πληκτρολόγησε μήνυμα...";
+input.style = "margin-top:1rem; width:100%; padding:0.5rem; border-radius:8px; border:1px solid #ccc";
+box.appendChild(input);
+
+const sendBtn = document.createElement("button");
+sendBtn.innerText = "📨 Αποστολή";
+sendBtn.onclick = () => {
+  const user = select.value;
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  const historyKey = "chatHistory_" + user;
+  const history = JSON.parse(localStorage.getItem(historyKey)) || [];
+  history.push({ sender: "Εσύ", message: msg });
+  localStorage.setItem(historyKey, JSON.stringify(history));
+
+  loadHistory(user);
+  input.value = "";
+  chatBox.scrollTop = chatBox.scrollHeight;
   };
-  box.appendChild(sendBtn);
+ box.appendChild(sendBtn);
 
-  const cancel = document.createElement("button");
-  cancel.innerText = "Κλείσιμο";
-  cancel.style.marginTop = "1rem";
-  cancel.onclick = () => modal.remove();
-  box.appendChild(cancel);
+ const cancel = document.createElement("button");
+ cancel.innerText = "Κλείσιμο";
+ cancel.style.marginTop = "1rem";
+ cancel.onclick = () => modal.remove();
+ box.appendChild(cancel);
 
-  modal.appendChild(box);
-  document.body.appendChild(modal);
+ modal.appendChild(box);
+ document.body.appendChild(modal);
 }
   </script>
 </body>
