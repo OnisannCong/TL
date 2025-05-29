@@ -30,7 +30,7 @@
      cursor: pointer;
      transition: background 0.3s;
     }
-   .note-button:hover {
+    .note-button:hover {
       background: var(--button-hover);
     }
     .toolbar {
@@ -771,7 +771,7 @@ function openChatMock() {
   box.appendChild(title);
 
   const select = document.createElement("select");
-  ["nikos@example.com", "kostas@example.com", "maria@example.com"].forEach(name => {
+  ["nikos@example.com", "kostas@example.com", "maria@example.com", "aggelos@example.com", "giwrgos@example.com" ].forEach(name => {
     const opt = document.createElement("option");
     opt.value = name;
     opt.textContent = name;
@@ -796,7 +796,7 @@ loadHistory(select.value);
 
 const input = document.createElement("input");
 input.type = "text";
-input.placeholder = "Πληκτρολόγησε μήνυμα...";
+input.placeholder = "Mήνυμα...";
 input.style = "margin-top:1rem; width:100%; padding:0.5rem; border-radius:8px; border:1px solid #ccc";
 box.appendChild(input);
 
