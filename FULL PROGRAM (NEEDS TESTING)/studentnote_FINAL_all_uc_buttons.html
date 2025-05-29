@@ -229,7 +229,19 @@
     body.dark .note-header button:hover {
       background-color: rgba(255, 255, 255, 0.1);
    }
-
+   .toolbar button {
+     background: var(--button-bg);
+     color: white;
+     border: none;
+     padding: 0.6rem 1rem;
+     border-radius: 8px;
+     font-weight: bold;
+     cursor: pointer;
+     transition: background 0.3s;
+   }
+   .toolbar button:hover {
+     background: var(--button-hover);
+   }
   </style>
 </head>
 <body>
